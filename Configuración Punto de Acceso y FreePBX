@@ -1,0 +1,53 @@
+Implementacion de un Sistema de Telefonía IP en un Raspberry 4B. En este sistema las rapsberry creara su propia red, asi no se requiere conexion a un router o a internet.
+
+Los pasos se detallan a continuación:
+
+1. Instalación del sistema operativo RasPBX
+
+Para llevar a cabo la instalación, se requiere una tarjeta microSD con adaptador SD. Los requisitos mínimos de la tarjeta son una capacidad de al menos 
+8GB, lo cual es necesario para garantizar el correcto funcionamiento del servicio que se desea instalar. Posteriormente, la tarjeta microSD debe insertarse en un computador.
+
+A continuación, se debe proceder a descargar la imagen del sistema operativo RasPBX. La última versión disponible es raspbx-20-10-2020, que es compatible
+con las Raspberry Pi 4, 3 y 2. Para comenzar con la configuración, se deben seguir los pasos que se detallan a continuación:
+
+a) Descargar la imagen en la pagina oficial de raspbx, en el siguiente enlace: http://www.raspbx.org/downloads/
+b) Utilizar la herramienta Win32 Disk Imager para copiar la imagen en la tarjeta SD.
+c) Crear un archivo de texto vacio con el nombre ‘ssh’ y guardar en la tarjeta SD.
+
+Una vez que la imagen haya sido grabada en la tarjeta SD, se inserta esta en la Raspberry Pi y se conecta el dispositivo a la corriente eléctrica. Para identificar
+la red generada por la Raspberry Pi, se puede utilizar la herramienta Advanced IP Scanner, la cual permite detectar la dirección IP del dispositivo. Con esta información, se accede al terminal del computador y se establece una conexión remota con la Raspberry Pi mediante el protocolo SSH, que facilita la administración del dispositivo de manera remota. Durante el proceso de conexión por SSH, se solicita una contraseña, siendo la predeterminada “raspberry”.
+
+2. Actualización del Sistema Operativo
+Para evitar actualizaciones no deseadas en el repositorio de PHP y prevenir posibles errores durante la actualización del sistema, es necesario editar el archivo
+de fuentes de APT. Para ello, se ejecuta el siguiente comando:
+
+sudo nano /etc/apt/sources.list.d/php.list
+
+Para actualizar el sistema:
+
+sudo apt update
+sudo apt upgrade
+
+3. Creación del Punto de Acceso
+En este proyecto, es necesario que la Raspberry Pi establezca su propia red inalámbrica. Para ello, se utilizan los programas hostapd y dnsmasq. Hostapd
+permite que la Raspberry Pi funcione como un punto de acceso, mientras que dnsmasq proporciona los servicios de DNS y DHCP, encargándose de asignar
+direcciones IP a los dispositivos que se conecten a la red. Para instalar ambos programas, se debe ejecutar lo siguiente:
+
+sudo apt install hostapd dnsmasq
+
+Una vez instalado hostapd, es necesario configurarlo para que funcione como un punto de acceso y permita que la Raspberry Pi ofrezca una red inalámbrica. Para realizar esta configuración, se debe acceder al archivo de configuración de hostapd mediante el comando:
+
+sudo nano /etc/hostapd/hostapd.conf
+
+
+Una vez dentro del archivo de configuración, es necesario definir los parámetros específicos para establecer el punto de acceso de la red. Por ejemplo, se puede
+asignar el nombre de la red (SSID) como “ServicioVoIp” y establecer la clave de acceso.
+
+
+Una vez guardada la configuración del punto de acceso, es necesario asegurarse de que hostapd utilice el archivo de configuración /etc/hostapd/hostapd.conf al iniciarse. 
+
+Para ello, se debe abrir el archivo de configuración predeterminado de hostapd con el comando:
+
+sudo nano /etc/default/hostapd
+
+Dentro del archivo se añade la linea: DAEMON_CONF="/etc/hostapd/hostapd.conf"
