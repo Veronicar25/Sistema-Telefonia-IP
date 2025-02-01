@@ -1,4 +1,4 @@
-Implementacion de un Sistema de Telefonía IP en un Raspberry 4B. En este sistema las rapsberry creara su propia red, asi no se requiere conexion a un router o a internet.
+#Implementacion de un Sistema de Telefonía IP en un Raspberry 4B. En este sistema las rapsberry creara su propia red, asi no se requiere conexion a un router o a internet.
 
 Los pasos se detallan a continuación:
 
@@ -15,7 +15,9 @@ b) Utilizar la herramienta Win32 Disk Imager para copiar la imagen en la tarjeta
 c) Crear un archivo de texto vacio con el nombre ‘ssh’ y guardar en la tarjeta SD.
 
 Una vez que la imagen haya sido grabada en la tarjeta SD, se inserta esta en la Raspberry Pi y se conecta el dispositivo a la corriente eléctrica. Para identificar
-la red generada por la Raspberry Pi, se puede utilizar la herramienta Advanced IP Scanner, la cual permite detectar la dirección IP del dispositivo. Con esta información, se accede al terminal del computador y se establece una conexión remota con la Raspberry Pi mediante el protocolo SSH, que facilita la administración del dispositivo de manera remota. Durante el proceso de conexión por SSH, se solicita una contraseña, siendo la predeterminada “raspberry”.
+la red generada por la Raspberry Pi, se puede utilizar la herramienta Advanced IP Scanner, la cual permite detectar la dirección IP del dispositivo. 
+Con esta información, se accede al terminal del computador y se establece una conexión remota con la Raspberry Pi mediante el protocolo SSH, que facilita la
+administración del dispositivo de manera remota. Durante el proceso de conexión por SSH, se solicita una contraseña, siendo la predeterminada “raspberry”.
 
 2. Actualización del Sistema Operativo
 Para evitar actualizaciones no deseadas en el repositorio de PHP y prevenir posibles errores durante la actualización del sistema, es necesario editar el archivo
@@ -35,7 +37,8 @@ direcciones IP a los dispositivos que se conecten a la red. Para instalar ambos 
 
 sudo apt install hostapd dnsmasq
 
-Una vez instalado hostapd, es necesario configurarlo para que funcione como un punto de acceso y permita que la Raspberry Pi ofrezca una red inalámbrica. Para realizar esta configuración, se debe acceder al archivo de configuración de hostapd mediante el comando:
+Una vez instalado hostapd, es necesario configurarlo para que funcione como un punto de acceso y permita que la Raspberry Pi ofrezca una red inalámbrica. 
+Para realizar esta configuración, se debe acceder al archivo de configuración de hostapd mediante el comando:
 
 sudo nano /etc/hostapd/hostapd.conf
 
@@ -51,3 +54,86 @@ Para ello, se debe abrir el archivo de configuración predeterminado de hostapd 
 sudo nano /etc/default/hostapd
 
 Dentro del archivo se añade la linea: DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+4.Configuración del servidor DHCP
+Para configurarlo, se debe acceder al archivo correspondiente utilizando el comando:
+
+sudo nano /etc/dhcpcd.conf
+
+Luego agregar la línea que se muestra a continuación:
+
+Interface wlan0
+    static ip_address=192.168.4.1/24
+    nohook wpa_supplicant
+
+5. Configuración de dnsmasq
+
+En este proyecto, dnsmasq se utiliza para gestionar la asignación de direcciones IP y proporcionar servicios de resolución de nombres en la red inalámbrica 
+creada por la Raspberry Pi. Para ello, primero se ejecuta el comando:
+
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+
+Luego se edita el archivo de configuración de dnsmasq con el comando:
+
+sudo nano /etc/dnsmasq.conf
+
+Se ajusta el rango de direcciones DHCP mediante el comando:
+
+interface=wlan0
+ dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
+
+6. Habilitación del enrutamiento y el NAT
+
+Primero, se mueve y respalda el archivo de configuración sysctl.conf con el comando:
+
+sudo mv /etc/sysctl.conf 
+
+Luego, se habilita el reenvío de paquetes IPv4 con el comando:
+
+net.ipv4.ip_forward=1
+
+Finalmente, se configura iptables para habilitar el NAT con el comando:
+
+sudo iptable -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+
+Se guarda la configuración para que persista después de un reinicio.
+
+7. Configuración Sistema de Telefonia IP
+
+Con las configuraciones anteriores, se ha establecido un punto de acceso. El siguiente paso es conectarse a esta red desde un computador e ingresar al sistema
+a través del navegador utilizando la dirección IP de la Raspberry Pi. En FreePBX, se realizan las configuraciones iniciales del servicio, que incluyen la creación de
+un usuario, una contraseña, un correo electrónico para notificaciones y el nombre del servicio. 
+
+Luego, se selecciona la opción Applications, se presiona en Extensions, y se elige el tipo de extensión.
+
+Se ingresa el número de extensión, el nombre de usuario y la clave correspondiente. Para este proyecto, se crearon dos usuarios: María y Pedro. A María
+se le asignó la extensión 100 junto con su clave, mientras que a Pedro se le configuró la extensión 101 siguiendo el mismo procedimiento.
+
+8. Descarga y configuración de Zoiper 5
+
+Una vez instalado el softphone, se llevaron a cabo pruebas configurando dos usuarios con los mismos datos registrados en FreePBX. Por ejemplo, para el usuario 
+María, se asignó la extensión 100, la clave correspondiente y la dirección IP del dispositivo que provee el servicio IP, es decir, la IP de la Raspberry Pi (192.168.4.1)
+
+Con este paso, se concluye la instalación y configuración del servicio IP en la Raspberry Pi. Para realizar las pruebas, se requieren al menos dos dispositivos,
+como un computador o un teléfono celular, los cuales permitirán realizar llamadas y verificar la correcta conexión.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
