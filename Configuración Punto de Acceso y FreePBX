@@ -46,6 +46,15 @@ sudo nano /etc/hostapd/hostapd.conf
 Una vez dentro del archivo de configuración, es necesario definir los parámetros específicos para establecer el punto de acceso de la red. Por ejemplo, se puede
 asignar el nombre de la red (SSID) como “ServicioVoIp” y establecer la clave de acceso.
 
+interface=wlan0
+driver=nl80211 ssid=ServicioVoIP
+hw_mode=g channel=7
+wmm_enabled=0 macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=veronicar wpa_key_mgmt=WPA-PSK rsn_pairwise=CCMP
+
 
 Una vez guardada la configuración del punto de acceso, es necesario asegurarse de que hostapd utilice el archivo de configuración /etc/hostapd/hostapd.conf al iniciarse. 
 
