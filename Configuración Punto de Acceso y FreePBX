@@ -39,6 +39,8 @@ Se valida la correcta instalación con el siguiente comando:
 
 iptables --version
 
+sudo reboot 
+
 3. Creación del Punto de Acceso
 En este proyecto, es necesario que la Raspberry Pi establezca su propia red inalámbrica. Para ello, se utilizan los programas hostapd y dnsmasq. Hostapd
 permite que la Raspberry Pi funcione como un punto de acceso, mientras que dnsmasq proporciona los servicios de DNS y DHCP, encargándose de asignar
