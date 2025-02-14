@@ -30,6 +30,15 @@ Para actualizar el sistema:
 sudo apt update
 sudo apt upgrade
 
+Instalación de Iptable:
+
+sudo apt-get update
+sudo apt-get install iptables
+
+Se valida la correcta instalación con el siguiente comando:
+
+iptables --version
+
 3. Creación del Punto de Acceso
 En este proyecto, es necesario que la Raspberry Pi establezca su propia red inalámbrica. Para ello, se utilizan los programas hostapd y dnsmasq. Hostapd
 permite que la Raspberry Pi funcione como un punto de acceso, mientras que dnsmasq proporciona los servicios de DNS y DHCP, encargándose de asignar
